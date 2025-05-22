@@ -10,3 +10,5 @@ langchain-chroma
 #==0.2.4
 protobuf
 #==3.20
+pypdf
+
