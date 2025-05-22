@@ -1,24 +1,52 @@
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_core.vectorstores import InMemoryVectorStore
-from langchain_openai import OpenAIEmbeddings
+from langchain_google_vertexai import VertexAIEmbeddings
+from langchain_text_splitters.character import RecursiveCharacterTextSplitter
+from google.oauth2 import service_account
 import os
+
+from langchain_chroma import Chroma
+
 
 HOME_PATH= os.environ["HOME"]
 PDF_FILE_NAME= "my_cv.pdf"
 FULL_PDF_PATH= f"{HOME_PATH}/Downloads/{PDF_FILE_NAME}"
 
+COLLECTION_NAME= "example_collection"
+CHROMA_DIRECTORY= f"{HOME_PATH}/Downloads/chroma_db"
+
+SERVICE_ACCOUNT_JSON_PATH= os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+GCP_PROJECT_NAME= "-".join(SERVICE_ACCOUNT_JSON_PATH.split("/")[-1].split("-")[:-1])
+LOCATION= 'us-central1'
+
+EMBEDDING_MODEL= "text-embedding-004"
+QUERY= "Who is the data scientist?"
+
+
+
+credentials= service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_JSON_PATH)
+embedding = VertexAIEmbeddings(
+    model=EMBEDDING_MODEL,
+    project= GCP_PROJECT_NAME,
+    location= LOCATION,
+    credentials= credentials,
+    )
+
 
 loader = PyPDFLoader(FULL_PDF_PATH)
-document= loader.lazy_load()
+data= loader.load()
+splitter= RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=0)
+docs= splitter.split_documents(data)
 
-document_pages= []
-for page in document:
-    document_pages.append(page)
+print(docs)
 
 
+# vector_db = Chroma(
+#     collection_name= COLLECTION_NAME,
+#     embedding_function= embedding,
+#     persist_directory= CHROMA_DIRECTORY,
+# )
 
-vector_store = InMemoryVectorStore.from_documents(document_pages, OpenAIEmbeddings())
-docs = vector_store.similarity_search("Who is data scientist?", k=2)
 
-for doc in docs:
-    print(f'Page {doc.metadata["page"]}: {doc.page_content[:300]}\n')
+# docstorage = vector_db.from_documents(documents=docs, embedding=embedding)
