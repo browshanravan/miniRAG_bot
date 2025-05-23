@@ -27,12 +27,12 @@ def generate_embedding(model, project, location, credentials):
     return vertex_ai_embedding
 
 
-def generate_documents(pdf_filepath):
+def generate_documents(pdf_filepath, chunk_size, chunk_overlap):
     pdf_loader = PyPDFLoader(pdf_filepath)
     pdf_data= pdf_loader.load()
     text_splitter= RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=0)
+        chunk_size= chunk_size,
+        chunk_overlap= chunk_overlap)
     documents= text_splitter.split_documents(pdf_data)
     
     return documents
@@ -67,9 +67,10 @@ def gemini_llm(project, location, model, credentials, question, contents, intera
     )
 
     contents = [
+        #Can have multiple types.Content with one being a pre-prompt and one being the retrieved contents shown below and one being the question
         types.Content(
             role="user",
-            parts=[types.Part.from_text(text=" ".join(contents))] #since contents preprompt is a list of text
+            parts=[types.Part.from_text(text=" ".join(contents))] #since contents retrieved is a list of str they need to become one str
             ),
         types.Content(
             role="user",
