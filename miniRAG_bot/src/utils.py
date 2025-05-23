@@ -2,7 +2,8 @@ from google import genai
 from google.genai import types
 
 
-def gemini_llm(project, location, model, credentials, question, contents):
+
+def gemini_llm(project, location, model, credentials, question, contents, interactive):
     client = genai.Client(
         vertexai=True,
         project=project,
@@ -13,7 +14,7 @@ def gemini_llm(project, location, model, credentials, question, contents):
     contents = [
         types.Content(
             role="user",
-            parts=[types.Part.from_text(text="\n".join(contents))] #since contents preprompt is a list of text
+            parts=[types.Part.from_text(text=" ".join(contents))] #since contents preprompt is a list of text
             ),
         types.Content(
             role="user",
@@ -41,9 +42,19 @@ def gemini_llm(project, location, model, credentials, question, contents):
         )],
         )
 
-    for chunk in client.models.generate_content_stream(
+    if interactive:
+        for response in client.models.generate_content_stream(
+            model = model,
+            contents = contents,
+            config = generate_content_config,
+            ):
+            print(response.text)
+    
+    
+    response= client.models.generate_content(
         model = model,
         contents = contents,
         config = generate_content_config,
-        ):
-        print(chunk.text, end="")
+        )
+    print(response.text)
+
