@@ -1,9 +1,12 @@
-from miniRAG_bot.src.utils import gemini_llm
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_google_vertexai import VertexAIEmbeddings
-from langchain_text_splitters.character import RecursiveCharacterTextSplitter
-from google.oauth2 import service_account
-from langchain_chroma import Chroma
+from miniRAG_bot.src.utils import (
+    generate_gcp_credentials,
+    generate_embedding,
+    generate_documents,
+    store_embedding_chroma,
+    retrieve_relevant_contents,
+    gemini_llm,
+)
+
 import os
 
 
@@ -26,36 +29,34 @@ INTERACTIVE= False
 QUERY= "Who is the data scientist?"
 
 
-gcp_credentials= service_account.Credentials.from_service_account_file(
-    filename= SERVICE_ACCOUNT_JSON_PATH,
-    scopes= SCOPES
+gcp_credentials= generate_gcp_credentials(
+    scopes= SCOPES, 
+    service_account_path= SERVICE_ACCOUNT_JSON_PATH,
     )
 
-vertex_ai_embedding = VertexAIEmbeddings(
-    model=EMBEDDING_MODEL,
+vertex_ai_embedding = generate_embedding(
+    model= EMBEDDING_MODEL,
     project= GCP_PROJECT_NAME,
     location= LOCATION,
     credentials= gcp_credentials,
     )
 
+documents= generate_documents(
+    pdf_filepath= FULL_PDF_PATH
+    )
 
-pdf_loader = PyPDFLoader(FULL_PDF_PATH)
-pdf_data= pdf_loader.load()
-text_splitter= RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=0)
-documents= text_splitter.split_documents(pdf_data)
-
-
-vector_db = Chroma(
+embedded_documents= store_embedding_chroma(
     collection_name= COLLECTION_NAME,
     embedding_function= vertex_ai_embedding,
     persist_directory= CHROMA_DIRECTORY,
-)
+    documents= documents,
+    embedding= vertex_ai_embedding
+    )
 
-document_storage = vector_db.from_documents(documents=documents, embedding=vertex_ai_embedding).as_retriever()
-relevant_documents = document_storage.invoke(QUERY)
-relevant_contents= [relevant_documents[x].page_content for x in range(len(relevant_documents))]
+relevant_contents= retrieve_relevant_contents(
+    embedded_documents= embedded_documents, 
+    query= QUERY)
+
 
 gemini_llm(
     project= GCP_PROJECT_NAME, 
