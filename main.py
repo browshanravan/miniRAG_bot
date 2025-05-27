@@ -27,7 +27,7 @@ LOCATION= 'us-central1'
 
 EMBEDDING_MODEL= "text-embedding-004"
 GCP_LLM_MODEL= "gemini-2.5-flash-preview-05-20"
-INTERACTIVE= False
+STREAM= False
 QUERY= "Who is the data scientist?"
 #######################################################################################
 
@@ -72,5 +72,5 @@ gemini_llm(
     credentials= gcp_credentials, 
     question= QUERY, 
     contents= relevant_contents,
-    interactive= INTERACTIVE,
+    stream= STREAM,
 )

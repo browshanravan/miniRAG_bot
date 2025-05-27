@@ -58,7 +58,7 @@ def retrieve_relevant_contents(embedded_documents, query):
     return relevant_contents
 
 
-def gemini_llm(project, location, model, credentials, question, contents, interactive):
+def gemini_llm(project, location, model, credentials, question, contents, stream):
     client = genai.Client(
         vertexai=True,
         project=project,
@@ -98,7 +98,7 @@ def gemini_llm(project, location, model, credentials, question, contents, intera
         )],
         )
 
-    if interactive:
+    if stream:
         for response in client.models.generate_content_stream(
             model = model,
             contents = contents,

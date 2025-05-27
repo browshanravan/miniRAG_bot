@@ -66,7 +66,7 @@ Use cases include PDF Q&A, knowledge-base search over documents, and prototyping
 2. (Optional) Create and activate a virtual environment  
 
    ```bash
-   python3.10 -m venv .venv
+   python3 -m venv .venv
    source .venv/bin/activate
    ```
 
@@ -100,7 +100,7 @@ LOCATION = "us-central1"
 EMBEDDING_MODEL = "text-embedding-004"
 GCP_LLM_MODEL = "gemini-2.5-flash-preview-05-20"
 
-INTERACTIVE = False
+STREAM = False
 QUERY = "Who is the data scientist?"
 ```
 
@@ -108,7 +108,7 @@ QUERY = "Who is the data scientist?"
 - **COLLECTION_NAME** and **CHROMA_DIRECTORY** set your vector store.  
 - **CHUNK_SIZE/OVERLAP** control text splitting.  
 - **EMBEDDING_MODEL** and **GCP_LLM_MODEL** select Vertex AI and Gemini models.  
-- **INTERACTIVE** toggles streaming vs. single-shot responses.  
+- **STREAM** toggles streaming vs. single-shot responses.  
 - **QUERY** is the question to ask.
 
 ---
