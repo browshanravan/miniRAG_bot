@@ -51,7 +51,7 @@ Use cases include PDF Q&A, knowledge-base search over documents, and prototyping
 
 ## Prerequisites
 
-- Python 3.10  
+- Python 3.11
 - Google Cloud Project with:
   - Vertex AI API enabled  
   - GenAI (Gemini) API enabled  
