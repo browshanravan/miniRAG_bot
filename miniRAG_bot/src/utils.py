@@ -38,14 +38,14 @@ def generate_documents(pdf_filepath, chunk_size, chunk_overlap):
     return documents
 
 
-def store_embedding_chroma(collection_name, embedding_function, persist_directory, documents, embedding):
+def store_embedding_chroma(collection_name, embedding_function, persist_directory, documents):
     vector_db = Chroma(
         collection_name= collection_name,
         embedding_function= embedding_function,
         persist_directory= persist_directory,
         )
     
-    embedded_documents = vector_db.from_documents(documents= documents, embedding= embedding)
+    embedded_documents = vector_db.from_documents(documents= documents, embedding= embedding_function)
 
     return embedded_documents
 

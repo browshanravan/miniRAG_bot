@@ -56,8 +56,7 @@ embedded_documents= store_embedding_chroma(
     collection_name= COLLECTION_NAME,
     embedding_function= vertex_ai_embedding,
     persist_directory= CHROMA_DIRECTORY,
-    documents= documents,
-    embedding= vertex_ai_embedding
+    documents= documents
     )
 
 relevant_contents= retrieve_relevant_contents(
