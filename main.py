@@ -26,7 +26,7 @@ GCP_PROJECT_NAME= "-".join(SERVICE_ACCOUNT_JSON_PATH.split("/")[-1].split("-")[:
 LOCATION= 'us-central1'
 
 EMBEDDING_MODEL= "text-embedding-004"
-GCP_LLM_MODEL= "gemini-2.5-flash-preview-05-20"
+GCP_LLM_MODEL= "gemini-2.5-flash-lite"
 STREAM= False
 QUERY= "Who is the data scientist?"
 #######################################################################################
